@@ -172,12 +172,14 @@ def create_app(test_config=None):
         ult_any = db.execute(
             "SELECT * FROM eventos WHERE centro_id=? ORDER BY ocurrido_en DESC, id DESC LIMIT 1", (c["id"],)).fetchone()
         desde = (now - timedelta(days=rg["ventana_dias"])).strftime(FMT)
-        reps = db.execute("SELECT COUNT(*) FROM eventos WHERE centro_id=? AND tipo='LOW' AND ocurrido_en>=?",
-                          (c["id"], desde)).fetchone()[0]
+        cortes = episodios(c["id"], limite=None)
+        # LOW repetidos durante el mismo corte no abren otro episodio.
+        reps = sum(ep["inicio"] >= desde for ep in cortes)
         if ult_elec is None:
             elec, elec_cls, dur = "Sin dato eléctrico", "offline", None
         elif ult_elec["tipo"] == "LOW":
-            dur = int((now - parse_dt(ult_elec["ocurrido_en"])).total_seconds() // 60)
+            inicio = cortes[0]["inicio"]
+            dur = max(0, int((now - parse_dt(inicio)).total_seconds() // 60))
             elec, elec_cls = f"Sin alimentación EPM ({dur} min)", "alert"
         else:
             elec, elec_cls, dur = "Con alimentación EPM", "ok", None
@@ -404,6 +406,9 @@ def create_app(test_config=None):
             if not (0 < nuevas["umbral_media_min"] < nuevas["umbral_alta_min"] < nuevas["umbral_critica_min"]):
                 flash("Los umbrales deben cumplir: media < alta < crítica.", "error")
                 return redirect(url_for("criticidad"))
+            if nuevas["repeticiones_alta"] < 1 or nuevas["ventana_dias"] < 1:
+                flash("La recurrencia y su ventana deben ser mayores que cero.", "error")
+                return redirect(url_for("criticidad"))
             for k, v in nuevas.items():
                 db.execute("UPDATE reglas SET valor=? WHERE clave=?", (v, k))
             auditar("actualizar", "reglas", None, str(nuevas))
@@ -444,6 +449,10 @@ def create_app(test_config=None):
                 flash("Complete centro, alcance, área y un diagnóstico de al menos 10 caracteres.", "error")
                 return redirect(url_for("verificacion_nueva", centro=f.get("centro_id"), evento=f.get("evento_id")))
             ev = f.get("evento_id") or None
+            if ev is not None and not db.execute(
+                    "SELECT 1 FROM eventos WHERE id=? AND centro_id=?", (ev, c["id"])).fetchone():
+                flash("El evento debe existir y pertenecer al centro seleccionado.", "error")
+                return redirect(url_for("verificacion_nueva", centro=c["id"]))
             cur = db.execute(
                 "INSERT INTO verificaciones(centro_id, evento_id, autor_id, creado_en, diagnostico, alcance, area_responsable, estado) "
                 "VALUES (?,?,?,?,?,?,?, 'Abierta')",
@@ -553,14 +562,21 @@ def create_app(test_config=None):
             return jsonify(error="API deshabilitada: configure API_KEY"), 503
         if not secrets.compare_digest(request.headers.get("X-API-Key", ""), key):
             return jsonify(error="No autorizado"), 401
-        data = request.get_json(silent=True) or {}
+        data = request.get_json(silent=True)
+        if not isinstance(data, dict):
+            return jsonify(error="El cuerpo debe ser un objeto JSON"), 400
         tipo = data.get("tipo")
         c = get_db().execute("SELECT * FROM centros WHERE codigo=?", (str(data.get("codigo_centro", "")).upper(),)).fetchone()
         if not c or tipo not in TIPOS_EVENTO:
             return jsonify(error="codigo_centro o tipo inválido", tipos=list(TIPOS_EVENTO)), 400
-        oc = parse_dt(data.get("ocurrido_en")) if data.get("ocurrido_en") else ahora()
+        fecha = data.get("ocurrido_en")
+        if fecha is not None and not isinstance(fecha, str):
+            return jsonify(error="ocurrido_en debe ser una fecha en texto"), 400
+        oc = parse_dt(fecha) if fecha else ahora()
         if oc is None:
             return jsonify(error="ocurrido_en debe tener formato YYYY-MM-DD HH:MM:SS"), 400
+        if oc > ahora() + timedelta(minutes=1):
+            return jsonify(error="La fecha de ocurrencia no puede estar en el futuro"), 400
         eid, nuevo = registrar_evento(c["id"], tipo, oc.strftime(FMT), "api", str(data.get("nota", ""))[:300])
         get_db().commit()
         return jsonify(id=eid, duplicado=not nuevo), (201 if nuevo else 200)
