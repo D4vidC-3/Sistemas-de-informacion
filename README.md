@@ -6,6 +6,14 @@ Es una aplicación web para el área de **Infraestructura y Operaciones de Redes
 
 > Todos los datos son **ficticios o de prueba**. No hay conexión con dispositivos ESP32 reales, con Aranda ni con canales de notificación institucionales.
 
+## Accesos y documentación
+
+- Aplicación indicada en el informe: https://david23qr4w5e6r.pythonanywhere.com
+- Azure DevOps: https://dev.azure.com/llsaldarrq/EAFIT-Sistemas-Informacion
+- Documentación para la Wiki: [Inicio](docs/Home.md).
+
+Las credenciales de prueba se comparten por canal privado. La URL corresponde al despliegue documentado por el equipo; cada actualización requiere ejecutar las pruebas y recargar el servidor.
+
 ## Funcionalidades (historias de usuario)
 
 | HU | Funcionalidad | Ruta |
@@ -37,14 +45,13 @@ templates/              Vistas HTML (Jinja2)
 static/style.css        Estilos
 tests/test_app.py       Pruebas funcionales por historia de usuario
 wsgi_pythonanywhere.py  Plantilla de despliegue en PythonAnywhere
-mockup_entrega2/        Mockup interactivo de la Entrega 2 (referencia)
 ```
 
 ## Instalar y ejecutar en local
 
 ```bash
-git clone https://github.com/theansw3r/eafit-sistemas-informacion-grupo1.git
-cd eafit-sistemas-informacion-grupo1
+git clone https://github.com/D4vidC-3/Sistemas-de-informacion.git
+cd Sistemas-de-informacion
 python -m venv .venv
 # Windows: .venv\Scripts\activate    |   Mac/Linux: source .venv/bin/activate
 pip install -r requirements.txt
@@ -64,7 +71,7 @@ Usuarios creados: `coordinador` (puede crear centros, editar reglas y gestionar 
 python -m unittest discover -s tests -v
 ```
 
-Las 15 pruebas cubren los criterios de aceptación de cada HU, los permisos por rol, el CSRF y la API.
+Las pruebas comprueban escenarios de las HU implementadas, permisos por rol, CSRF, API y regresiones de episodios. El resultado y sus límites se registran en `docs/Pruebas.md`; no sustituyen la aceptación de la empresa.
 
 ## Configuración y secretos
 
@@ -93,15 +100,19 @@ Tipos válidos: `LOW`, `HIGH`, `EN_LINEA`, `ENERGIA_RESTABLECIDA`. Los eventos i
 ## Despliegue en PythonAnywhere (plan gratuito)
 
 1. Crear una cuenta en pythonanywhere.com y abrir una consola **Bash**.
-2. `git clone https://github.com/theansw3r/eafit-sistemas-informacion-grupo1.git`
-3. `cd eafit-sistemas-informacion-grupo1 && pip install --user -r requirements.txt`
+2. `git clone https://github.com/D4vidC-3/Sistemas-de-informacion.git`
+3. `cd Sistemas-de-informacion && pip install --user -r requirements.txt`
 4. Crear el archivo `.env` a partir de `.env.example` con valores reales.
 5. `set -a; source .env; set +a; flask --app app init-db`
 6. En la pestaña **Web**, crear una app con *Manual configuration* (Python 3.10 o superior). En el archivo WSGI, pegar el contenido de `wsgi_pythonanywhere.py`, cambiando `USUARIO`.
-7. En *Static files*, agregar la URL `/static/` apuntando a `/home/USUARIO/eafit-sistemas-informacion-grupo1/static`.
+7. En *Static files*, agregar la URL `/static/` apuntando a `/home/USUARIO/Sistemas-de-informacion/static`.
 8. Activar *Force HTTPS* y pulsar **Reload**. La app queda disponible en `https://USUARIO.pythonanywhere.com`.
 
 Para actualizar: `git pull` en la consola y **Reload** en la pestaña Web.
+
+## Cálculo de episodios y criticidad
+
+El primer LOW abre un episodio y el siguiente HIGH lo cierra. Otro LOW durante el corte conserva su inicio. La duración del corte en curso se mide desde ese primer LOW; la recurrencia cuenta episodios cuyo inicio cae dentro de la ventana configurada, incluido el que siga abierto. Un corte iniciado antes de la ventana conserva su duración, pero no suma un nuevo inicio dentro de ella. La comunicación considera el último reporte recibido, sin deducir normalización eléctrica.
 
 ## Alcance y límites
 

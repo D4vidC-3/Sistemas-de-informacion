@@ -4,7 +4,7 @@
 import os
 import sys
 
-PROYECTO = "/home/USUARIO/eafit-sistemas-informacion-grupo1"
+PROYECTO = "/home/USUARIO/Sistemas-de-informacion"
 if PROYECTO not in sys.path:
     sys.path.insert(0, PROYECTO)
 

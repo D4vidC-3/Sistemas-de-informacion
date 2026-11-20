@@ -14,7 +14,7 @@
 <div class="table-scroll"><table><thead><tr><th>Centro</th><th>Estado eléctrico</th><th>Comunicación</th><th>Criticidad</th><th>Último reporte</th></tr></thead><tbody>
 {% for f in filas %}<tr><td><a class="id" href="{{ url_for('centro_detalle', cid=f.c.id) }}">{{ f.c.codigo }}</a><div class="muted">{{ f.c.ubicacion }}</div></td>
 <td><span class="status {{ f.e.elec_cls }}">{{ f.e.elec }}</span></td><td><span class="status {{ f.e.com_cls }}">{{ f.e.com }}</span></td>
-<td><span class="status {{ crit_cls(f.e.crit) }}">{{ f.e.crit }}</span><div class="muted">{{ f.e.reps }} LOW en la ventana</div></td><td class="mono">{{ f.e.ultimo or '—' }}</td></tr>{% endfor %}
+<td><span class="status {{ crit_cls(f.e.crit) }}">{{ f.e.crit }}</span><div class="muted">{{ f.e.reps }} episodios iniciados en la ventana</div></td><td class="mono">{{ f.e.ultimo or '—' }}</td></tr>{% endfor %}
 </tbody></table></div></div>
 <div class="panel"><div class="panelhead"><div><h2>Eventos recientes</h2><small>Por fecha de ocurrencia</small></div><a class="btn small" href="{{ url_for('historial') }}">Ver historial</a></div>
 <div class="panelbody"><ul class="timeline">{% for r in recientes %}<li><strong>{{ r.codigo }} · {{ r.tipo }}</strong><span>{{ r.ocurrido_en }} · {{ ORIGENES[r.origen] }}</span></li>{% else %}<li>Sin eventos.</li>{% endfor %}</ul></div></div>

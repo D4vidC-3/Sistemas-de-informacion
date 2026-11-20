@@ -6,10 +6,10 @@
 <div class="panel"><div class="panelhead"><h2>Estado actual</h2></div><div class="panelbody"><dl class="kv">
 <dt>Estado eléctrico</dt><dd><span class="status {{ e.elec_cls }}">{{ e.elec }}</span></dd>
 <dt>Comunicación</dt><dd><span class="status {{ e.com_cls }}">{{ e.com }}</span></dd>
-<dt>Criticidad</dt><dd><span class="status {{ crit_cls(e.crit) }}">{{ e.crit }}</span> · {{ e.reps }} LOW en la ventana</dd>
+<dt>Criticidad</dt><dd><span class="status {{ crit_cls(e.crit) }}">{{ e.crit }}</span> · {{ e.reps }} episodios iniciados en la ventana</dd>
 <dt>Frecuencia de reporte</dt><dd>{{ c.frecuencia_reporte_min ~ ' min' if c.frecuencia_reporte_min else 'No configurada' }}</dd>
 <dt>Último reporte</dt><dd class="mono">{{ e.ultimo or '—' }}</dd></dl></div></div>
-<div class="panel"><div class="panelhead"><div><h2>Episodios de corte (LOW → HIGH)</h2><small>Un episodio agrupa dos transiciones; no equivale a un incidente ni a un ticket.</small></div></div>
+<div class="panel"><div class="panelhead"><div><h2>Episodios de corte (LOW → HIGH)</h2><small>Un episodio empieza con el primer LOW y termina con el siguiente HIGH. Los LOW repetidos no abren otro episodio; el corte en curso puede seguir abierto. No equivale a un ticket.</small></div></div>
 <div class="table-scroll"><table><thead><tr><th>Inicio (LOW)</th><th>Fin (HIGH)</th><th>Duración</th></tr></thead><tbody>
 {% for ep in episodios %}<tr><td class="mono">{{ ep.inicio }}</td><td class="mono">{{ ep.fin or 'En curso' }}</td><td>{{ (ep.minutos ~ ' min') if ep.minutos is not none else '—' }}</td></tr>{% else %}<tr><td colspan="3" class="muted">Sin episodios.</td></tr>{% endfor %}</tbody></table></div></div>
 </div><div>
