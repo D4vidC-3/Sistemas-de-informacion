@@ -1,0 +1,18 @@
+{% extends "base.html" %}{% block title %}Centros de cableado{% endblock %}
+{% block content %}
+<div class="page-head"><div><div class="eyebrow">HU-01 · Registro y consulta</div><h1>Centros de cableado</h1><p class="subtitle">Catálogo de centros supervisados. Busque por código, nombre o ubicación y abra el detalle.</p></div></div>
+<div class="panel"><div class="panelhead"><form method="get" class="flex"><input class="searchbar" name="q" value="{{ q }}" placeholder="Buscar centro..."><button class="btn">Buscar</button>{% if q %}<a class="btn small" href="{{ url_for('centros') }}">Limpiar</a>{% endif %}</form><small>{{ filas|length }} centro(s)</small></div>
+<div class="table-scroll"><table><thead><tr><th>Código</th><th>Nombre</th><th>Ubicación</th><th>Frecuencia de reporte</th><th>Estado eléctrico</th><th>Comunicación</th></tr></thead><tbody>
+{% for f in filas %}<tr><td><a class="id" href="{{ url_for('centro_detalle', cid=f.c.id) }}">{{ f.c.codigo }}</a></td><td>{{ f.c.nombre }}</td><td>{{ f.c.ubicacion }}</td>
+<td>{{ f.c.frecuencia_reporte_min ~ ' min' if f.c.frecuencia_reporte_min else 'No configurada' }}</td><td><span class="status {{ f.e.elec_cls }}">{{ f.e.elec }}</span></td><td><span class="status {{ f.e.com_cls }}">{{ f.e.com }}</span></td></tr>
+{% else %}<tr><td colspan="6" class="muted">No hay centros que coincidan.</td></tr>{% endfor %}</tbody></table></div></div>
+{% if user.rol == 'coordinador' %}
+<div class="panel"><div class="panelhead"><div><h2>Registrar centro</h2><small>Solo rol coordinador</small></div></div><div class="panelbody">
+<form method="post" action="{{ url_for('centro_nuevo') }}" class="formgrid"><input type="hidden" name="csrf" value="{{ csrf }}">
+<div class="field"><label>Código *</label><input name="codigo" placeholder="CT-B00-P0" required></div>
+<div class="field"><label>Nombre *</label><input name="nombre" required></div>
+<div class="field"><label>Ubicación</label><input name="ubicacion"></div>
+<div class="field"><label>Frecuencia esperada de reporte (min)</label><input name="frecuencia_reporte_min" type="number" min="1" placeholder="Vacío = no configurada"></div>
+<div class="full"><button class="btn primary">Guardar centro</button></div></form></div></div>
+{% endif %}
+{% endblock %}

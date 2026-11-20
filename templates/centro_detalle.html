@@ -1,0 +1,21 @@
+{% extends "base.html" %}{% block title %}{{ c.codigo }}{% endblock %}
+{% block content %}
+<div class="page-head"><div><div class="eyebrow">Detalle de centro</div><h1>{{ c.codigo }}</h1><p class="subtitle">{{ c.nombre }} · {{ c.ubicacion }}</p></div>
+<div class="flex"><a class="btn" href="{{ url_for('historial', centro=c.id) }}">Historial completo</a><a class="btn primary" href="{{ url_for('verificacion_nueva', centro=c.id) }}">Registrar verificación</a></div></div>
+<div class="columns"><div>
+<div class="panel"><div class="panelhead"><h2>Estado actual</h2></div><div class="panelbody"><dl class="kv">
+<dt>Estado eléctrico</dt><dd><span class="status {{ e.elec_cls }}">{{ e.elec }}</span></dd>
+<dt>Comunicación</dt><dd><span class="status {{ e.com_cls }}">{{ e.com }}</span></dd>
+<dt>Criticidad</dt><dd><span class="status {{ crit_cls(e.crit) }}">{{ e.crit }}</span> · {{ e.reps }} LOW en la ventana</dd>
+<dt>Frecuencia de reporte</dt><dd>{{ c.frecuencia_reporte_min ~ ' min' if c.frecuencia_reporte_min else 'No configurada' }}</dd>
+<dt>Último reporte</dt><dd class="mono">{{ e.ultimo or '—' }}</dd></dl></div></div>
+<div class="panel"><div class="panelhead"><div><h2>Episodios de corte (LOW → HIGH)</h2><small>Un episodio agrupa dos transiciones; no equivale a un incidente ni a un ticket.</small></div></div>
+<div class="table-scroll"><table><thead><tr><th>Inicio (LOW)</th><th>Fin (HIGH)</th><th>Duración</th></tr></thead><tbody>
+{% for ep in episodios %}<tr><td class="mono">{{ ep.inicio }}</td><td class="mono">{{ ep.fin or 'En curso' }}</td><td>{{ (ep.minutos ~ ' min') if ep.minutos is not none else '—' }}</td></tr>{% else %}<tr><td colspan="3" class="muted">Sin episodios.</td></tr>{% endfor %}</tbody></table></div></div>
+</div><div>
+<div class="panel"><div class="panelhead"><h2>Últimos eventos</h2></div><div class="panelbody"><ul class="timeline">
+{% for r in eventos %}<li><strong>{{ r.tipo }}</strong><span>{{ r.ocurrido_en }} · {{ ORIGENES[r.origen] }}{% if r.nota %} · {{ r.nota }}{% endif %}</span> <a class="hint" href="{{ url_for('verificacion_nueva', centro=c.id, evento=r.id) }}">verificar</a></li>{% else %}<li>Sin eventos.</li>{% endfor %}</ul></div></div>
+<div class="panel"><div class="panelhead"><h2>Verificaciones</h2></div><div class="panelbody">
+{% for v in verifs %}<div class="mini"><div><b><a href="{{ url_for('verificacion_detalle', vid=v.id) }}">#{{ v.id }} · {{ ALCANCES[v.alcance] }}</a></b><small>{{ v.creado_en }} · {{ v.autor }}</small></div><span class="status {{ 'ok' if v.estado=='Cerrada' else 'medium' }}">{{ v.estado }}</span></div>{% else %}<p class="muted">Sin verificaciones registradas.</p>{% endfor %}
+</div></div></div></div>
+{% endblock %}

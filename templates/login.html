@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ingresar · Centro de Operaciones de Redes</title><link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"></head>
+<body><div class="login-wrap"><div class="login-card">
+<div class="eyebrow">EAFIT · Redes</div><h1>Centro de Operaciones de Redes</h1>
+<p class="subtitle" style="margin-bottom:18px">Ingrese con su usuario asignado.</p>
+{% with msgs = get_flashed_messages(with_categories=true) %}{% for cat, m in msgs %}<div class="flash {{ cat }}">{{ m }}</div>{% endfor %}{% endwith %}
+<form method="post" class="stack">
+<input type="hidden" name="csrf" value="{{ csrf }}">
+<div class="field"><label for="usuario">Usuario</label><input id="usuario" name="usuario" autocomplete="username" required></div>
+<div class="field"><label for="password">Contraseña</label><input id="password" type="password" name="password" autocomplete="current-password" required></div>
+<button class="btn primary">Ingresar</button>
+</form>
+<p class="hint mt">Ambiente académico con datos ficticios.</p>
+</div></div></body></html>

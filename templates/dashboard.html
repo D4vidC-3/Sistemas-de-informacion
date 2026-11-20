@@ -1,0 +1,22 @@
+{% extends "base.html" %}{% block title %}Vista general{% endblock %}
+{% block content %}
+<div class="page-head"><div><div class="eyebrow">HU-03 · Estado de centros</div><h1>Vista general</h1>
+<p class="subtitle">El estado eléctrico (señales LOW/HIGH) y el estado de comunicación (reportes según frecuencia configurada) se muestran por separado: la falta de reporte no se interpreta como corte eléctrico.</p></div>
+<a class="btn primary" href="{{ url_for('eventos') }}">Registrar evento</a></div>
+<div class="stats">
+  <div class="stat"><div class="statlabel">Centros supervisados</div><div class="value">{{ stats.total }}</div><div class="tiny">registrados en el sistema</div><div class="tbar"></div></div>
+  <div class="stat"><div class="statlabel">Sin alimentación EPM</div><div class="value">{{ stats.sin_epm }}</div><div class="tiny">último evento eléctrico = LOW</div><div class="tbar"></div></div>
+  <div class="stat"><div class="statlabel">Sin comunicación</div><div class="value">{{ stats.sin_com }}</div><div class="tiny">superan su frecuencia de reporte</div><div class="tbar"></div></div>
+  <div class="stat"><div class="statlabel">Verificaciones abiertas</div><div class="value">{{ stats.verif_abiertas }}</div><div class="tiny">pendientes de cierre humano</div><div class="tbar"></div></div>
+</div>
+<div class="columns">
+<div class="panel"><div class="panelhead"><div><h2>Centros por criticidad</h2><small>Ordenados de mayor a menor criticidad (reglas HU-05)</small></div></div>
+<div class="table-scroll"><table><thead><tr><th>Centro</th><th>Estado eléctrico</th><th>Comunicación</th><th>Criticidad</th><th>Último reporte</th></tr></thead><tbody>
+{% for f in filas %}<tr><td><a class="id" href="{{ url_for('centro_detalle', cid=f.c.id) }}">{{ f.c.codigo }}</a><div class="muted">{{ f.c.ubicacion }}</div></td>
+<td><span class="status {{ f.e.elec_cls }}">{{ f.e.elec }}</span></td><td><span class="status {{ f.e.com_cls }}">{{ f.e.com }}</span></td>
+<td><span class="status {{ crit_cls(f.e.crit) }}">{{ f.e.crit }}</span><div class="muted">{{ f.e.reps }} LOW en la ventana</div></td><td class="mono">{{ f.e.ultimo or '—' }}</td></tr>{% endfor %}
+</tbody></table></div></div>
+<div class="panel"><div class="panelhead"><div><h2>Eventos recientes</h2><small>Por fecha de ocurrencia</small></div><a class="btn small" href="{{ url_for('historial') }}">Ver historial</a></div>
+<div class="panelbody"><ul class="timeline">{% for r in recientes %}<li><strong>{{ r.codigo }} · {{ r.tipo }}</strong><span>{{ r.ocurrido_en }} · {{ ORIGENES[r.origen] }}</span></li>{% else %}<li>Sin eventos.</li>{% endfor %}</ul></div></div>
+</div>
+{% endblock %}

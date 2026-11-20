@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% block title %}Verificaciones{% endblock %}
+{% block content %}
+<div class="page-head"><div><div class="eyebrow">HU-09 · Verificación humana</div><h1>Verificaciones</h1><p class="subtitle">Registro del diagnóstico humano, alcance de la afectación y área responsable. El cierre exige el resultado verificado del servicio.</p></div>
+<a class="btn primary" href="{{ url_for('verificacion_nueva') }}">Nueva verificación</a></div>
+<div class="panel"><div class="panelhead"><form class="flex" method="get"><select class="searchbar" name="estado"><option value="">Todos los estados</option>{% for s in estados %}<option {{ 'selected' if s==estado }}>{{ s }}</option>{% endfor %}</select><button class="btn">Filtrar</button></form><small>{{ rows|length }} registro(s)</small></div>
+<div class="table-scroll"><table><thead><tr><th>#</th><th>Centro</th><th>Creada</th><th>Autor</th><th>Alcance</th><th>Área</th><th>Estado</th><th>Casos</th></tr></thead><tbody>
+{% for v in rows %}<tr><td><a class="id" href="{{ url_for('verificacion_detalle', vid=v.id) }}">#{{ v.id }}</a></td><td>{{ v.codigo }}</td><td class="mono">{{ v.creado_en }}</td><td>{{ v.autor }}</td><td>{{ ALCANCES[v.alcance] }}</td><td>{{ AREAS[v.area_responsable] }}</td>
+<td><span class="status {{ 'ok' if v.estado=='Cerrada' else 'medium' }}">{{ v.estado }}</span></td><td>{{ v.ncasos }}</td></tr>{% else %}<tr><td colspan="8" class="muted">Aún no hay verificaciones.</td></tr>{% endfor %}</tbody></table></div></div>
+{% endblock %}

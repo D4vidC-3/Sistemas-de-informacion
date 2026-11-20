@@ -1,0 +1,19 @@
+{% extends "base.html" %}{% block title %}Registrar evento{% endblock %}
+{% block content %}
+<div class="page-head"><div><div class="eyebrow">HU-02 · Registro de eventos</div><h1>Registrar evento</h1>
+<p class="subtitle">Registre manualmente un evento o una simulación de prueba. Los eventos quedan guardados en la base de datos. Los dispositivos podrán enviar eventos por la API <code>/api/eventos</code> cuando se autorice la integración.</p></div></div>
+<div class="columns">
+<div class="panel"><div class="panelhead"><h2>Nuevo evento</h2></div><div class="panelbody">
+<form method="post" class="formgrid"><input type="hidden" name="csrf" value="{{ csrf }}">
+<div class="field"><label>Centro *</label><select name="centro_id" required>{% for c in centros %}<option value="{{ c.id }}">{{ c.codigo }} · {{ c.nombre }}</option>{% endfor %}</select></div>
+<div class="field"><label>Tipo de evento *</label><select name="tipo" required>{% for k, v in TIPOS.items() %}<option value="{{ k }}">{{ k }} — {{ v }}</option>{% endfor %}</select></div>
+<div class="field"><label>Fecha y hora de ocurrencia</label><input type="datetime-local" name="ocurrido_en" value="{{ ahora }}"></div>
+<div class="field"><label>Origen</label><select name="origen"><option value="manual">Registro manual</option><option value="simulado">Simulación de prueba</option></select></div>
+<div class="field full"><label>Nota (opcional)</label><input name="nota" maxlength="300"></div>
+<div class="full"><button class="btn primary">Guardar evento</button></div></form>
+<div class="notice warm mt">LOW/HIGH son señales digitales del dispositivo: no miden voltaje y un HIGH no confirma por sí solo que el servicio de red esté restablecido.</div>
+</div></div>
+<div class="panel"><div class="panelhead"><h2>Últimos registros</h2></div><div class="panelbody"><ul class="timeline">
+{% for r in recientes %}<li><strong>{{ r.codigo }} · {{ r.tipo }}</strong><span>Ocurrió {{ r.ocurrido_en }} · registrado {{ r.recibido_en }} · {{ r.autor or ORIGENES[r.origen] }}</span></li>{% endfor %}</ul></div></div>
+</div>
+{% endblock %}

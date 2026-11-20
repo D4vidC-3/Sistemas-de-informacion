@@ -1,0 +1,14 @@
+{% extends "base.html" %}{% block title %}Historial{% endblock %}
+{% block content %}
+<div class="page-head"><div><div class="eyebrow">HU-04 · Historial</div><h1>Historial de eventos</h1><p class="subtitle">Consulta individual (por centro) o consolidada, ordenada de lo más reciente a lo más antiguo.</p></div>
+<a class="btn" href="{{ url_for('historial_csv', **f) }}">Exportar CSV</a></div>
+<div class="panel"><div class="panelhead"><form method="get" class="flex">
+<select class="searchbar" name="centro"><option value="">Todos los centros</option>{% for c in centros %}<option value="{{ c.id }}" {{ 'selected' if f.get('centro')|string == c.id|string }}>{{ c.codigo }}</option>{% endfor %}</select>
+<select class="searchbar" name="tipo"><option value="">Todos los tipos</option>{% for k in TIPOS %}<option value="{{ k }}" {{ 'selected' if f.get('tipo')==k }}>{{ k }}</option>{% endfor %}</select>
+<input class="searchbar" type="date" name="desde" value="{{ f.get('desde','') }}" title="Desde"><input class="searchbar" type="date" name="hasta" value="{{ f.get('hasta','') }}" title="Hasta">
+<button class="btn primary">Filtrar</button><a class="btn" href="{{ url_for('historial') }}">Limpiar filtros</a></form>
+<small>{{ total }} registro(s){% if total > 300 %} · se muestran 300{% endif %}</small></div>
+<div class="table-scroll"><table><thead><tr><th>Ocurrió</th><th>Centro</th><th>Tipo</th><th>Origen</th><th>Registrado</th><th>Nota</th></tr></thead><tbody>
+{% for r in rows %}<tr><td class="mono">{{ r.ocurrido_en }}</td><td><a class="id" href="{{ url_for('centro_detalle', cid=r.centro_id) }}">{{ r.codigo }}</a></td><td>{{ r.tipo }}</td><td>{{ ORIGENES[r.origen] }}</td><td class="mono">{{ r.recibido_en }}</td><td>{{ r.nota or '' }}</td></tr>
+{% else %}<tr><td colspan="6" class="muted">Sin resultados para los filtros.</td></tr>{% endfor %}</tbody></table></div></div>
+{% endblock %}

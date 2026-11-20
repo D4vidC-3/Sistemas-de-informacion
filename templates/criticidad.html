@@ -1,0 +1,24 @@
+{% extends "base.html" %}{% block title %}Criticidad{% endblock %}
+{% block content %}
+<div class="page-head"><div><div class="eyebrow">HU-05 · Reglas configurables</div><h1>Reglas de criticidad</h1>
+<p class="subtitle">La criticidad orienta la prioridad de revisión según la duración del corte en curso y la recurrencia de LOW en la ventana. No crea tickets: la decisión es humana.</p></div></div>
+<div class="rules">
+<div class="rule"><i style="background:#9fbfe6"></i><strong>Baja</strong><div class="rulebig">&lt; {{ rg.umbral_media_min }} min</div><small>Corte breve sin recurrencia.</small></div>
+<div class="rule"><i style="background:#e3a541"></i><strong>Media</strong><div class="rulebig">≥ {{ rg.umbral_media_min }} min</div><small>O recurrencia alta con alimentación normal.</small></div>
+<div class="rule"><i style="background:#eaa0a4"></i><strong>Alta</strong><div class="rulebig">≥ {{ rg.umbral_alta_min }} min</div><small>O ≥ {{ rg.repeticiones_alta }} LOW en {{ rg.ventana_dias }} días.</small></div>
+<div class="rule"><i style="background:#c84e53"></i><strong>Crítica</strong><div class="rulebig">≥ {{ rg.umbral_critica_min }} min</div><small>O ≥ {{ rg.umbral_alta_min }} min con recurrencia alta.</small></div>
+</div>
+<div class="columns mt">
+<div class="panel"><div class="panelhead"><div><h2>Parámetros</h2><small>{{ 'Editable por coordinador' if user.rol=='coordinador' else 'Solo lectura para su rol' }}</small></div></div><div class="panelbody">
+<form method="post" class="formgrid"><input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="accion" value="guardar">
+{% set etiquetas = {'umbral_media_min':'Umbral media (min)','umbral_alta_min':'Umbral alta (min)','umbral_critica_min':'Umbral crítica (min)','repeticiones_alta':'Repeticiones para alta','ventana_dias':'Ventana de recurrencia (días)'} %}
+{% for k, lbl in etiquetas.items() %}<div class="field"><label>{{ lbl }}</label><input type="number" min="1" name="{{ k }}" value="{{ rg[k] }}" {{ 'disabled' if user.rol!='coordinador' }}></div>{% endfor %}
+{% if user.rol=='coordinador' %}<div class="full"><button class="btn primary">Guardar reglas</button></div>{% endif %}</form></div></div>
+<div class="panel"><div class="panelhead"><h2>Probar una regla</h2></div><div class="panelbody">
+<form method="post" class="stack"><input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="accion" value="probar">
+<div class="field"><label>Duración del corte (min)</label><input type="number" min="0" name="duracion" value="{{ resultado.d if resultado else 12 }}"></div>
+<div class="field"><label>LOW en la ventana</label><input type="number" min="0" name="repeticiones" value="{{ resultado.r if resultado else 1 }}"></div>
+<button class="btn">Clasificar</button></form>
+{% if resultado %}<p class="mt">Resultado: <span class="status {{ crit_cls(resultado.nivel) }}">{{ resultado.nivel }}</span></p>{% endif %}
+</div></div></div>
+{% endblock %}

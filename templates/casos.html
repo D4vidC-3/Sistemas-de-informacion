@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% block title %}Borradores de caso{% endblock %}
+{% block content %}
+<div class="page-head"><div><div class="eyebrow">HU-06-SIM · Borrador de caso</div><h1>Borradores de caso</h1><p class="subtitle">Los borradores no se transmiten a Aranda. El coordinador registra el caso manualmente en Aranda y anota la referencia, o lo descarta.</p></div></div>
+<div class="panel"><div class="table-scroll"><table><thead><tr><th>#</th><th>Centro</th><th>Prioridad</th><th>Motivo</th><th>Creado</th><th>Estado</th><th>Acción</th></tr></thead><tbody>
+{% for k in rows %}<tr><td>#{{ k.id }}</td><td>{{ k.codigo }}</td><td>{{ k.prioridad }}</td><td>{{ k.motivo }}<div class="muted"><a href="{{ url_for('verificacion_detalle', vid=k.verificacion_id) }}">Verificación #{{ k.verificacion_id }}</a></div></td><td class="mono">{{ k.creado_en }}<div class="muted">{{ k.autor }}</div></td>
+<td><span class="status {{ 'blue' if k.estado=='Borrador' else ('ok' if 'Registrado' in k.estado else 'offline') }}">{{ k.estado }}</span>{% if k.referencia_aranda %}<div class="muted">Ref. {{ k.referencia_aranda }}</div>{% endif %}</td>
+<td>{% if k.estado=='Borrador' and user.rol=='coordinador' %}<form method="post" action="{{ url_for('caso_actualizar', kid=k.id) }}" class="flex"><input type="hidden" name="csrf" value="{{ csrf }}"><input class="searchbar" name="referencia" placeholder="Ref. Aranda" style="min-width:110px;width:120px"><button class="btn small" name="accion" value="registrar">Registrado</button><button class="btn small" name="accion" value="descartar">Descartar</button></form>{% elif k.estado=='Borrador' %}<span class="muted">Pendiente del coordinador</span>{% endif %}</td></tr>
+{% else %}<tr><td colspan="7" class="muted">No hay borradores.</td></tr>{% endfor %}</tbody></table></div></div>
+{% endblock %}

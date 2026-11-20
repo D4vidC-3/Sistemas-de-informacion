@@ -1,0 +1,28 @@
+{% extends "base.html" %}{% block title %}Verificación #{{ v.id }}{% endblock %}
+{% block content %}
+<div class="page-head"><div><div class="eyebrow">HU-09 · Verificación humana</div><h1>Verificación #{{ v.id }} · {{ v.codigo }}</h1><p class="subtitle">{{ v.centro }}</p></div>
+<span class="status {{ 'ok' if v.estado=='Cerrada' else 'medium' }}">{{ v.estado }}</span></div>
+<div class="columns"><div>
+<div class="panel"><div class="panelhead"><h2>Registro</h2></div><div class="panelbody"><dl class="kv">
+<dt>Autor</dt><dd>{{ v.autor }} · {{ v.creado_en }}</dd>
+<dt>Evento relacionado</dt><dd>{{ (ev.tipo ~ ' · ' ~ ev.ocurrido_en) if ev else 'Sin evento asociado' }}</dd>
+<dt>Alcance</dt><dd>{{ ALCANCES[v.alcance] }}</dd><dt>Área responsable</dt><dd>{{ AREAS[v.area_responsable] }}</dd>
+<dt>Diagnóstico</dt><dd>{{ v.diagnostico }}</dd>
+{% if v.estado=='Cerrada' %}<dt>Resultado verificado</dt><dd>{{ v.resultado }}</dd><dt>Cerrada por</dt><dd>{{ v.cerrador }} · {{ v.cerrado_en }}</dd>{% endif %}</dl></div></div>
+{% if v.estado != 'Cerrada' %}
+<div class="panel"><div class="panelhead"><h2>Actualizar estado</h2></div><div class="panelbody">
+<form method="post" class="stack"><input type="hidden" name="csrf" value="{{ csrf }}">
+<div class="field"><label>Nuevo estado</label><select name="estado">{% for s in estados %}<option {{ 'selected' if s==v.estado }}>{{ s }}</option>{% endfor %}</select></div>
+<div class="field"><label>Resultado verificado del servicio (obligatorio para cerrar)</label><textarea name="resultado" placeholder="Ej.: se confirmó con el área afectada que switch y enlaces operan normalmente."></textarea></div>
+<button class="btn primary">Guardar</button></form></div></div>{% endif %}
+</div><div>
+<div class="panel"><div class="panelhead"><div><h2>Borrador de caso (HU-06-SIM)</h2><small>No se envía a Aranda; sirve para registrarlo manualmente.</small></div></div><div class="panelbody">
+{% for k in casos %}<div class="mini"><div><b>Caso #{{ k.id }} · {{ k.prioridad }}</b><small>{{ k.motivo }}</small><small>{{ k.autor }} · {{ k.creado_en }}{% if k.referencia_aranda %} · Ref. Aranda {{ k.referencia_aranda }}{% endif %}</small></div><span class="status {{ 'blue' if k.estado=='Borrador' else ('ok' if 'Registrado' in k.estado else 'offline') }}">{{ k.estado }}</span></div>{% endfor %}
+<form method="post" action="{{ url_for('caso_nuevo', vid=v.id) }}" class="stack mt"><input type="hidden" name="csrf" value="{{ csrf }}">
+<div class="field"><label>Motivo del caso</label><textarea name="motivo" minlength="10" required></textarea></div>
+<div class="field"><label>Prioridad propuesta</label><select name="prioridad"><option>Baja</option><option selected>Media</option><option>Alta</option><option>Crítica</option></select></div>
+<label><input type="checkbox" name="confirmo" value="si" required> Confirmo que la decisión de abrir el caso es mía y no automática.</label>
+<button class="btn">Crear borrador</button></form></div></div>
+<div class="panel"><div class="panelhead"><h2>Trazabilidad</h2></div><div class="panelbody"><ul class="timeline">{% for h in hist %}<li><strong>{{ h.accion }} {{ h.detalle or '' }}</strong><span>{{ h.fecha }} · {{ h.nombre or 'sistema' }}</span></li>{% endfor %}</ul></div></div>
+</div></div>
+{% endblock %}
