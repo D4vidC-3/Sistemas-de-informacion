@@ -8,6 +8,7 @@ import sys
 import tempfile
 import unittest
 from datetime import timedelta
+from unittest.mock import patch
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 os.environ.setdefault("DATABASE_PATH", os.path.join(tempfile.gettempdir(), "redes_import.db"))
@@ -190,6 +191,86 @@ class TestHistorias(BaseTest):
 
 
 class TestLogica(BaseTest):
+    def escenario(self, eventos):
+        """Centro aislado para observar duración y recurrencia sin datos del seed."""
+        with self.app.app_context():
+            db = self.db()
+            db.execute("INSERT INTO centros(codigo,nombre,frecuencia_reporte_min,creado_en) VALUES ('REG','Regresión',15,?)",
+                       (appmod.ahora().strftime(appmod.FMT),))
+            cid = db.execute("SELECT id FROM centros WHERE codigo='REG'").fetchone()[0]
+            for tipo, fecha in eventos:
+                db.execute("INSERT INTO eventos(centro_id,tipo,ocurrido_en,recibido_en,origen) VALUES (?,?,?,?,'simulado')",
+                           (cid, tipo, fecha, fecha))
+            db.commit()
+        self.login()
+        return self.c.get(f"/centros/{cid}").get_data(as_text=True)
+
+    def test_low_repetidos_conservan_inicio_y_un_solo_episodio(self):
+        now = appmod.parse_dt("2026-11-20 12:00:00")
+        with patch.object(appmod, "ahora", return_value=now):
+            html = self.escenario([("LOW", "2026-11-20 11:40:00"),
+                                   ("LOW", "2026-11-20 11:59:00")])
+        self.assertIn("Sin alimentación EPM (20 min)", html)
+        self.assertIn("1 episodios iniciados en la ventana", html)
+        self.assertRegex(html, r'Criticidad</dt><dd><span class="status alert">Alta</span>')
+
+    def test_recuperacion_y_nuevo_corte_forman_dos_episodios(self):
+        now = appmod.parse_dt("2026-11-20 12:00:00")
+        with patch.object(appmod, "ahora", return_value=now):
+            html = self.escenario([("LOW", "2026-11-20 11:00:00"),
+                                   ("HIGH", "2026-11-20 11:10:00"),
+                                   ("LOW", "2026-11-20 11:40:00"),
+                                   ("LOW", "2026-11-20 11:59:00")])
+        self.assertIn("2 episodios iniciados en la ventana", html)
+        self.assertIn("Sin alimentación EPM (20 min)", html)
+
+    def test_corte_anterior_a_ventana_no_suma_nueva_recurrencia(self):
+        now = appmod.parse_dt("2026-11-20 12:00:00")
+        with patch.object(appmod, "ahora", return_value=now):
+            html = self.escenario([("LOW", "2026-11-10 12:00:00"),
+                                   ("LOW", "2026-11-20 11:59:00")])
+        self.assertIn("Sin alimentación EPM (14400 min)", html)
+        self.assertIn("0 episodios iniciados en la ventana", html)
+
+    def test_eventos_desordenados_se_agrupan_por_ocurrencia(self):
+        now = appmod.parse_dt("2026-11-20 12:00:00")
+        with patch.object(appmod, "ahora", return_value=now):
+            html = self.escenario([("HIGH", "2026-11-20 11:50:00"),
+                                   ("LOW", "2026-11-20 11:40:00"),
+                                   ("LOW", "2026-11-20 11:45:00")])
+        self.assertIn("Con alimentación EPM", html)
+        self.assertIn("10.0 min", html)
+        self.assertIn("1 episodios iniciados en la ventana", html)
+
+    def test_api_rechaza_json_invalido_y_fechas_futuras(self):
+        headers = {"X-API-Key": "clave-de-prueba"}
+        for body in ([1], {"codigo_centro": "CT-B19-P1", "tipo": "LOW", "ocurrido_en": 42},
+                     {"codigo_centro": "CT-B19-P1", "tipo": "LOW", "ocurrido_en": "2099-01-01 00:00:00"}):
+            with self.subTest(body=body):
+                self.assertEqual(self.c.post("/api/eventos", headers=headers, json=body).status_code, 400)
+
+    def test_verificacion_rechaza_evento_de_otro_centro(self):
+        self.login()
+        with self.app.app_context():
+            ev = self.db().execute("SELECT id FROM eventos WHERE centro_id != 1 LIMIT 1").fetchone()[0]
+        r = self.c.post("/verificaciones/nueva", data={"csrf": self.csrf("/verificaciones/nueva"),
+            "centro_id": 1, "evento_id": ev, "alcance": "incierto", "area": "redes",
+            "diagnostico": "Revisión de prueba del centro"}, follow_redirects=True)
+        self.assertIn("El evento debe existir y pertenecer al centro", r.get_data(as_text=True))
+        with self.app.app_context():
+            self.assertEqual(self.db().execute("SELECT COUNT(*) FROM verificaciones").fetchone()[0], 0)
+
+    def test_reglas_rechazan_ventana_o_recurrencia_no_positivas(self):
+        self.login("coord")
+        for campo, valor in (("ventana_dias", 0), ("repeticiones_alta", -1)):
+            datos = dict(appmod.REGLAS_DEFECTO, csrf=self.csrf("/criticidad"), accion="guardar")
+            datos[campo] = valor
+            r = self.c.post("/criticidad", data=datos, follow_redirects=True)
+            self.assertIn("deben ser mayores que cero", r.get_data(as_text=True))
+            with self.app.app_context():
+                self.assertEqual(self.db().execute("SELECT valor FROM reglas WHERE clave=?", (campo,)).fetchone()[0],
+                                 appmod.REGLAS_DEFECTO[campo])
+
     def test_episodios_emparejan_low_high(self):
         with self.app.app_context():
             db = self.db()
