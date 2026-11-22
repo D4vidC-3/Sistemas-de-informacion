@@ -129,3 +129,5 @@ La publicación de estos cambios en GitHub no actualiza automáticamente PythonA
 [Contribuciones verificables y apoyo de IA](docs/Contribuciones.md). [Pruebas](docs/Pruebas.md). [Manual de las nuevas funciones](docs/Manual.md).
 
 [Demostración práctica Odoo ERP/CRM con capturas y análisis](docs/Demo_ERP_CRM.md).
+
+[Gestión de sprints, cronología sustentada y aportes confirmados](docs/Gestion_sprints.md). Registro retrospectivo del 22/11; conserva las fechas reales de Azure y no reconstruye horas diarias.
