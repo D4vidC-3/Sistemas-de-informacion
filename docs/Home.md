@@ -1,6 +1,6 @@
 # Documentación de la solución de Redes EAFIT
 
-Esta documentación describe el piloto académico con datos ficticios. El código implementa siete historias funcionales; su aceptación por la empresa y el despliegue de las correcciones del 20 de noviembre siguen pendientes.
+Esta documentación describe el piloto académico con datos ficticios. El código implementa nueve historias académicas y está publicado en https://theansw3r.pythonanywhere.com. La aceptación final de la empresa sigue pendiente. [Despliegue verificado](Despliegue_verificado.md).
 
 - [Arquitectura y seguridad](Arquitectura.md)
 - [Backlog y trazabilidad](Backlog.md)

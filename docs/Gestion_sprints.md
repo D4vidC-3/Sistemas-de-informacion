@@ -42,9 +42,10 @@ Las integraciones reales con Aranda, ESP32 y canales de notificación y el despl
 | Corte documental | Tareas de cierre terminadas | Horas restantes estimadas | Interpretación |
 |---|---:|---:|---|
 | Corte anterior conservado | 3 de 10 | 4,25 | Instantánea anterior de cierre; no puntos originales ni horas ejecutadas |
-| 22/11 tras incorporar código | 5 de 10 | 2,25 | 50 % por conteo de estas tareas; no porcentaje de todo el proyecto |
+| 22/11 tras incorporar código | 5 de 10 | 2,25 | Corte intermedio: 50 % por conteo |
+| 22/11 tras publicar ambiente propio | 6 de 10 | 1,75 | Corte actual: 60 % por conteo; tarea 36 cerrada con evidencia |
 
-No se distribuyen estas horas entre días anteriores. Los puntos actuales son estimaciones retrospectivas de alcance; sin compromiso original y aceptación comparable no se acredita velocidad del sprint. El burndown nativo conserva sus datos reales. Las dos instantáneas muestran evolución de la revisión posterior, no una curva diaria del periodo.
+No se distribuyen estas horas entre días anteriores. Los puntos actuales son estimaciones retrospectivas de alcance; sin compromiso original y aceptación comparable no se acredita velocidad del sprint. El burndown nativo conserva sus datos reales. Las instantáneas muestran evolución de la revisión posterior, no una curva diaria del periodo.
 
 ## Balance retrospectivo documental
 
@@ -63,3 +64,8 @@ Preparado el 22/11 con artefactos y la confirmación de Lucas. No se registra co
 Lucas coordina el despliegue propio, Azure y el informe; David conserva el aporte de desarrollo base y apoya revisión técnica cuando esté disponible; Leovanis verifica el recorrido y el video. Se trata de responsabilidades de cierre indicadas por Lucas, sin crear cuentas ficticias en Azure. Assigned To solo se utiliza para identidades reales disponibles; nombres y aportes quedan en descripción y evidencia.
 
 Pendientes que requieren soporte real: aceptación de la aplicación final, autorización específica del ambiente y recepción del paquete, acceso docente al video y entrega privada de cuentas. La reconstrucción documental mejora trazabilidad y atribución, pero no sustituye esos soportes.
+
+
+## Despliegue propio realizado el 22 de noviembre
+
+Lucas creó la cuenta theansw3r y se publicó la versión f3ba6d9 con base nueva y datos ficticios. Pasaron las 28 pruebas en el alojamiento y nueve comprobaciones HTTP. La tarea 36 quedó cerrada con sus adjuntos. No se modificó el servidor de David. [Evidencia](Despliegue_verificado.md). Permanecen las dependencias externas de aceptación, recepción, permisos del video y revisión de credenciales anteriores.

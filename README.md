@@ -8,7 +8,8 @@ Es una aplicación web para el área de **Infraestructura y Operaciones de Redes
 
 ## Accesos y documentación
 
-- Aplicación indicada en el informe: https://david23qr4w5e6r.pythonanywhere.com
+- Aplicación académica actual: https://theansw3r.pythonanywhere.com
+- El video histórico conserva la base anterior alojada por David.
 - Azure DevOps: https://dev.azure.com/llsaldarrq/EAFIT-Sistemas-Informacion
 - Documentación para la Wiki: [Inicio](docs/Home.md).
 
@@ -124,7 +125,7 @@ Quedan fuera de esta entrega: la integración real con Aranda (HU-06-REAL), la i
 
 Se completaron HU-10 y HU-08-SIM y se ejecutaron 28 pruebas aprobadas en una base temporal local. El simulador reconstruye eventos hasta la hora seleccionada; no envía notificaciones ni registra entregas de mensajes. Las tendencias cuentan inicios de episodios, sin duplicar LOW repetidos. No hay cambios del esquema SQLite.
 
-La publicación de estos cambios en GitHub no actualiza automáticamente PythonAnywhere. El responsable del alojamiento debe seguir [la actualización de operación](docs/Operacion.md). La reunión del 17/11 respalda el mockup, las historias y P01–P03; la aceptación de esta aplicación final no se ha realizado. No se acredita rotación de credenciales del servidor sin acceso a su administración.
+El 22/11 se publicó el cierre en la cuenta propia de Lucas. Se ejecutaron 28 pruebas en el alojamiento y nueve comprobaciones HTTP de la URL pública. [Versión y evidencia del despliegue](docs/Despliegue_verificado.md). La publicación posterior en GitHub no recarga automáticamente el servidor. La reunión del 17/11 respalda el mockup, las historias y P01–P03; la aceptación de esta aplicación final no se ha realizado. No se acredita rotación de credenciales del servidor sin acceso a su administración.
 
 [Contribuciones verificables y apoyo de IA](docs/Contribuciones.md). [Pruebas](docs/Pruebas.md). [Manual de las nuevas funciones](docs/Manual.md).
 

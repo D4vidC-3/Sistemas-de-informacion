@@ -1,0 +1,61 @@
+{
+  "fecha": "2026-11-22T11:50:30.894032-05:00",
+  "url": "https://theansw3r.pythonanywhere.com",
+  "pruebas": [
+    {
+      "rol": "publico",
+      "ruta": "/salud",
+      "codigo": 200,
+      "resultado": "OK"
+    },
+    {
+      "rol": "publico",
+      "ruta": "/static/style.css",
+      "codigo": 200,
+      "resultado": "OK"
+    },
+    {
+      "rol": "coordinador",
+      "ruta": "/",
+      "codigo": 200,
+      "resultado": "OK"
+    },
+    {
+      "rol": "coordinador",
+      "ruta": "/avisos-simulados",
+      "codigo": 200,
+      "resultado": "OK"
+    },
+    {
+      "rol": "coordinador",
+      "ruta": "/tendencias",
+      "codigo": 200,
+      "resultado": "OK"
+    },
+    {
+      "rol": "tecnico",
+      "ruta": "/",
+      "codigo": 200,
+      "resultado": "OK"
+    },
+    {
+      "rol": "tecnico",
+      "ruta": "/avisos-simulados",
+      "codigo": 200,
+      "resultado": "OK"
+    },
+    {
+      "rol": "tecnico",
+      "ruta": "/tendencias",
+      "codigo": 403,
+      "resultado": "OK"
+    },
+    {
+      "rol": "publico",
+      "ruta": "http /login -> https",
+      "codigo": 200,
+      "resultado": "OK"
+    }
+  ],
+  "nota": "Prueba de humo HTTP en URL publicada. No es validación de Edwin. Sin altas ni ediciones de eventos o casos."
+}

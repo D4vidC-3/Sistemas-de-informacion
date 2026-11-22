@@ -1,0 +1,33 @@
+test_hu01_registrar_y_buscar_centro (test_app.TestHistorias.test_hu01_registrar_y_buscar_centro) ... ok
+test_hu02_api_registra_evento (test_app.TestHistorias.test_hu02_api_registra_evento) ... ok
+test_hu02_evento_persistente_y_sin_duplicados (test_app.TestHistorias.test_hu02_evento_persistente_y_sin_duplicados) ... ok
+test_hu03_estados_separados (test_app.TestHistorias.test_hu03_estados_separados) ... ok
+test_hu04_historial_filtrado (test_app.TestHistorias.test_hu04_historial_filtrado) ... ok
+test_hu05_clasificacion (test_app.TestHistorias.test_hu05_clasificacion) ... ok
+test_hu05_coordinador_valida_umbrales (test_app.TestHistorias.test_hu05_coordinador_valida_umbrales) ... ok
+test_hu06_borrador_requiere_confirmacion_y_no_envia (test_app.TestHistorias.test_hu06_borrador_requiere_confirmacion_y_no_envia) ... ok
+test_hu09_verificacion_y_cierre_con_resultado (test_app.TestHistorias.test_hu09_verificacion_y_cierre_con_resultado) ... ok
+test_api_rechaza_json_invalido_y_fechas_futuras (test_app.TestLogica.test_api_rechaza_json_invalido_y_fechas_futuras) ... ok
+test_corte_anterior_a_ventana_no_suma_nueva_recurrencia (test_app.TestLogica.test_corte_anterior_a_ventana_no_suma_nueva_recurrencia) ... ok
+test_episodios_emparejan_low_high (test_app.TestLogica.test_episodios_emparejan_low_high) ... ok
+test_eventos_desordenados_se_agrupan_por_ocurrencia (test_app.TestLogica.test_eventos_desordenados_se_agrupan_por_ocurrencia) ... ok
+test_low_repetidos_conservan_inicio_y_un_solo_episodio (test_app.TestLogica.test_low_repetidos_conservan_inicio_y_un_solo_episodio) ... ok
+test_recuperacion_y_nuevo_corte_forman_dos_episodios (test_app.TestLogica.test_recuperacion_y_nuevo_corte_forman_dos_episodios) ... ok
+test_reglas_rechazan_ventana_o_recurrencia_no_positivas (test_app.TestLogica.test_reglas_rechazan_ventana_o_recurrencia_no_positivas) ... ok
+test_verificacion_rechaza_evento_de_otro_centro (test_app.TestLogica.test_verificacion_rechaza_evento_de_otro_centro) ... ok
+test_api_requiere_clave (test_app.TestSeguridad.test_api_requiere_clave) ... ok
+test_login_incorrecto (test_app.TestSeguridad.test_login_incorrecto) ... ok
+test_post_sin_csrf_rechazado (test_app.TestSeguridad.test_post_sin_csrf_rechazado) ... ok
+test_requiere_login (test_app.TestSeguridad.test_requiere_login) ... ok
+test_tecnico_no_edita_reglas_ni_crea_centros (test_app.TestSeguridad.test_tecnico_no_edita_reglas_ni_crea_centros) ... ok
+test_avisos_umbral_y_low_repetido (test_cierre.TestCierre.test_avisos_umbral_y_low_repetido) ... ok
+test_filtros_invalidos_y_permiso (test_cierre.TestCierre.test_filtros_invalidos_y_permiso) ... ok
+test_high_cancela_pendiente_sin_borrar_aviso_superado (test_cierre.TestCierre.test_high_cancela_pendiente_sin_borrar_aviso_superado) ... ok
+test_retorno_en_umbral_cancela_y_silencio_no_inventa_corte (test_cierre.TestCierre.test_retorno_en_umbral_cancela_y_silencio_no_inventa_corte) ... ok
+test_simulacion_no_modifica_eventos_ni_crea_casos (test_cierre.TestCierre.test_simulacion_no_modifica_eventos_ni_crea_casos) ... ok
+test_tendencias_periodo_centro_y_episodios_sin_duplicar (test_cierre.TestCierre.test_tendencias_periodo_centro_y_episodios_sin_duplicar) ... ok
+
+----------------------------------------------------------------------
+Ran 28 tests in 32.982s
+
+OK

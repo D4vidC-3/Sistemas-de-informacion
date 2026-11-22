@@ -25,6 +25,6 @@ El responsable de PythonAnywhere debe revisar vigencia y límites del plan en su
 
 ## Handoff del cierre del 22 de noviembre
 
-Lucas dispone de acceso de colaborador a GitHub y no de administración de PythonAnywhere. El responsable del ambiente debe actualizar a la revisión de cierre, ejecutar las 28 pruebas, recargar WSGI y comprobar `/tendencias` con coordinador y `/avisos-simulados` con ambos roles. No se requiere migración de datos. Registrar el commit desplegado y el resultado real antes de afirmar que estas funciones están publicadas.
+Lucas creó su cuenta propia y publicó el cierre el 22/11 en https://theansw3r.pythonanywhere.com. Versión instalada y verificada: f3ba6d90024b4df79951b23634d3ef58866adfdd. Se ejecutaron 28 pruebas y nueve comprobaciones HTTP, incluidos ambos roles. El ambiente de David no se modificó. [Evidencias y mantenimiento](Despliegue_verificado.md).
 
 Revisar y sustituir en privado cualquier contraseña o clave que haya quedado expuesta en versiones anteriores. Cambiar variables de inicialización no modifica el hash de usuarios ya existentes. La sustitución de contraseñas debe realizarla el responsable del ambiente y comunicarse al profesor por un canal privado; no ponerlas en Git, el informe, capturas ni el video.
