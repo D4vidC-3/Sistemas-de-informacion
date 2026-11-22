@@ -109,3 +109,6 @@ a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
 .login-card{background:#fff;border-radius:16px;padding:32px;width:min(400px,100%);box-shadow:0 30px 80px #0005}
 .login-card h1{font-size:22px}.inline{display:inline}
 dl.kv{display:grid;grid-template-columns:160px 1fr;gap:8px 14px;margin:0}dl.kv dt{color:var(--muted);font-weight:700;font-size:12px}dl.kv dd{margin:0}
+
+/* Gráficas sin dependencias externas: la tabla conserva el dato accesible. */
+.trend-bar{height:14px;background:var(--blue,#2563eb);border-radius:4px;min-width:0}

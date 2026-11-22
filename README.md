@@ -23,6 +23,8 @@ Las credenciales de prueba se comparten por canal privado. La URL corresponde al
 | HU-03 | Estado eléctrico y estado de comunicación por separado | `/` |
 | HU-04 | Historial individual y consolidado con filtros y exportación CSV | `/historial` |
 | HU-05 | Reglas de criticidad configurables (Baja, Media, Alta, Crítica) | `/criticidad` |
+| HU-10 | Tendencias por centro y periodo, señales y episodios diferenciados | `/tendencias` (coordinador) |
+| HU-08-SIM | Temporizadores simulados de 5/10 minutos y cancelación por HIGH | `/avisos-simulados` |
 | HU-09 | Verificación humana: diagnóstico, alcance, área y cierre con resultado obligatorio | `/verificaciones` |
 | HU-06-SIM | Borrador de caso con confirmación humana; registro manual de la referencia de Aranda | `/casos` |
 
@@ -117,3 +119,11 @@ El primer LOW abre un episodio y el siguiente HIGH lo cierra. Otro LOW durante e
 ## Alcance y límites
 
 Quedan fuera de esta entrega: la integración real con Aranda (HU-06-REAL), la ingesta desde ESP32 reales (HU-07), las notificaciones operativas (HU-08) y el despliegue institucional (HU-11), porque requieren permisos de TI y Seguridad. La criticidad orienta la revisión, pero no crea tickets: la decisión de abrir, escalar o cerrar un caso es siempre humana.
+
+## Cierre técnico del 22 de noviembre de 2026
+
+Se completaron HU-10 y HU-08-SIM y se ejecutaron 28 pruebas aprobadas en una base temporal local. El simulador reconstruye eventos hasta la hora seleccionada; no envía notificaciones ni registra entregas de mensajes. Las tendencias cuentan inicios de episodios, sin duplicar LOW repetidos. No hay cambios del esquema SQLite.
+
+La publicación de estos cambios en GitHub no actualiza automáticamente PythonAnywhere. El responsable del alojamiento debe seguir [la actualización de operación](docs/Operacion.md). La reunión del 17/11 respalda el mockup, las historias y P01–P03; la aceptación de esta aplicación final no se ha realizado. No se acredita rotación de credenciales del servidor sin acceso a su administración.
+
+[Contribuciones verificables y apoyo de IA](docs/Contribuciones.md). [Pruebas](docs/Pruebas.md). [Manual de las nuevas funciones](docs/Manual.md).

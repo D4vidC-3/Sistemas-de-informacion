@@ -16,6 +16,8 @@
       <a href="{{ url_for('eventos') }}" class="{{ 'active' if ep=='eventos' }}"><span class="ico">⚡</span>Registrar evento</a>
       <a href="{{ url_for('historial') }}" class="{{ 'active' if ep.startswith('historial') }}"><span class="ico">☰</span>Historial</a>
       <a href="{{ url_for('criticidad') }}" class="{{ 'active' if ep=='criticidad' }}"><span class="ico">△</span>Criticidad</a>
+      <a href="{{ url_for('avisos_simulados') }}" class="{{ 'active' if ep=='avisos_simulados' }}"><span class="ico">◷</span>Avisos simulados</a>
+      {% if user.rol == 'coordinador' %}<a href="{{ url_for('tendencias') }}" class="{{ 'active' if ep=='tendencias' }}"><span class="ico">▥</span>Tendencias</a>{% endif %}
       <div class="sep">Coordinación</div>
       <a href="{{ url_for('verificaciones') }}" class="{{ 'active' if ep.startswith('verificacion') }}"><span class="ico">✓</span>Verificaciones</a>
       <a href="{{ url_for('casos') }}" class="{{ 'active' if ep.startswith('caso') }}"><span class="ico">✉</span>Borradores de caso</a>

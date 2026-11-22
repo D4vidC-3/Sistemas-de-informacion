@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Tendencias{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>Tendencias por centro y periodo</h1><p>HU-10 · Episodios de prueba iniciados en el periodo seleccionado.</p></div></div>
+<form class="panel panelbody formgrid" method="get">
+<label class="field">Centro<select name="centro"><option value="">Todos los centros</option>{% for c in centros %}<option value="{{ c.id }}" {{ 'selected' if cid==c.id }}>{{ c.codigo }}</option>{% endfor %}</select></label>
+<label class="field">Desde<input type="date" name="desde" value="{{ desde }}" required></label>
+<label class="field">Hasta<input type="date" name="hasta" value="{{ hasta }}" required></label><button class="btn primary">Consultar</button>
+</form>
+<div class="stats"><div class="stat"><div class="statlabel">Episodios iniciados</div><strong class="value" id="total-episodios">{{ total }}</strong></div><div class="stat"><div class="statlabel">Señales LOW/HIGH recibidas</div><strong class="value">{{ senales }}</strong></div><div class="stat"><div class="statlabel">De esos episodios siguen abiertos</div><strong class="value">{{ abiertos }}</strong></div></div>
+<p class="notice">Un LOW repetido dentro del mismo corte no abre otro episodio. Las señales cuentan registros LOW/HIGH del periodo; los episodios cuentan el primer LOW. Los abiertos se evalúan al consultar. Un corte iniciado antes del periodo no suma otro inicio. Estos datos de prueba no acreditan mejoras operativas de EAFIT.</p>
+{% for titulo, filas in [('Por día', dias.items()), ('Por centro', por_centro)] %}
+<section class="panel"><div class="panelhead"><h2>{{ titulo }}</h2></div><div class="panelbody table-scroll"><table><thead><tr><th>{{ 'Fecha' if loop.index==1 else 'Centro' }}</th><th>Episodios</th><th>Distribución visual</th></tr></thead><tbody>
+{% if loop.index==1 %}{% for fecha, n in filas %}<tr><td>{{ fecha }}</td><td>{{ n }}</td><td><div class="trend-bar" style="width:{{ 100*n/max_dia }}%" aria-label="{{ n }} episodios"></div></td></tr>{% endfor %}
+{% else %}{% for c in filas %}<tr><td>{{ c.codigo }}</td><td>{{ c.episodios }}</td><td><div class="trend-bar" style="width:{{ 100*c.episodios/max_centro }}%" aria-label="{{ c.episodios }} episodios"></div></td></tr>{% endfor %}{% endif %}
+</tbody></table></div></section>{% endfor %}
+{% endblock %}

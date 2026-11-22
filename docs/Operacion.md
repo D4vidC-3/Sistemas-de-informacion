@@ -12,7 +12,7 @@ El WSGI lee `.env` como pares simples `CLAVE=valor`: sin `export`, comillas envo
 
 1. El responsable del servidor hace una copia privada de la base y de su configuración; no las sube a GitHub.
 2. Incorpora la propuesta de cambios al repositorio del equipo y actualiza el clon del servidor.
-3. Ejecuta las 22 pruebas en una base temporal mediante unittest. Las pruebas no deben apuntarse a la base operativa.
+3. Ejecuta las 28 pruebas en una base temporal mediante unittest. Las pruebas no deben apuntarse a la base operativa.
 4. Revisa que WSGI y estáticos sigan apuntando al directorio existente; no vuelve a sembrar ni elimina datos.
 5. Pulsa Reload y comprueba `/salud`, ingreso y los escenarios de regresión con datos ficticios.
 6. Registra versión, fecha, responsable y resultados. Si falla, vuelve al código anterior y recarga. La corrección no modifica el esquema de datos.
@@ -22,3 +22,9 @@ El WSGI lee `.env` como pares simples `CLAVE=valor`: sin `export`, comillas envo
 Para una copia coherente de SQLite usar la API de backup del motor o detener escrituras antes de copiar. Guardar la copia fuera de Git con acceso restringido. La restauración debe ensayarse en una ubicación separada antes de considerarla un procedimiento comprobado. La plantilla no implementa respaldo automático ni monitoreo externo.
 
 El responsable de PythonAnywhere debe revisar vigencia y límites del plan en su cuenta. No se promete disponibilidad continua ni capacidad institucional. El código y el informe no sustituyen permisos de TI, autorización de uso de datos ni el acta de entrega al cliente.
+
+## Handoff del cierre del 22 de noviembre
+
+Lucas dispone de acceso de colaborador a GitHub y no de administración de PythonAnywhere. El responsable del ambiente debe actualizar a la revisión de cierre, ejecutar las 28 pruebas, recargar WSGI y comprobar `/tendencias` con coordinador y `/avisos-simulados` con ambos roles. No se requiere migración de datos. Registrar el commit desplegado y el resultado real antes de afirmar que estas funciones están publicadas.
+
+Revisar y sustituir en privado cualquier contraseña o clave que haya quedado expuesta en versiones anteriores. Cambiar variables de inicialización no modifica el hash de usuarios ya existentes. La sustitución de contraseñas debe realizarla el responsable del ambiente y comunicarse al profesor por un canal privado; no ponerlas en Git, el informe, capturas ni el video.

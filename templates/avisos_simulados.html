@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Avisos simulados{% endblock %}
+{% block content %}
+<div class="page-head"><div><h1>Avisos simulados de 5 y 10 minutos</h1><p>HU-08-SIM · Evaluación de temporizadores por episodio.</p></div></div>
+<p class="notice">Simulación calculada a partir de los eventos guardados. No envía mensajes ni crea tickets y no constituye un historial de entregas. El retorno HIGH cancela los avisos cuyo umbral aún no se había superado, incluido el retorno exactamente en el umbral. LOW repetidos conservan el inicio original.</p>
+<form class="panel panelbody formgrid" method="get"><label class="field">Centro<select name="centro"><option value="">Todos los centros</option>{% for c in centros %}<option value="{{ c.id }}" {{ 'selected' if cid==c.id }}>{{ c.codigo }}</option>{% endfor %}</select></label><label class="field">Evaluar al instante (hora de Bogotá)<input name="evaluado_en" type="datetime-local" value="{{ evaluado.replace(' ', 'T') }}" step="1" required></label><button class="btn primary">Simular</button></form>
+<p>Evaluación: <strong>{{ evaluado }}</strong>. Se reconstruye el estado usando únicamente eventos ocurridos hasta ese instante. Se muestran como máximo los últimos 20 episodios por centro.</p>
+<section class="panel"><div class="panelhead"><h2>Resultado de la simulación</h2></div><div class="table-scroll"><table><thead><tr><th>Centro / inicio LOW</th><th>Retorno HIGH</th><th>Umbral</th><th>Instante del umbral</th><th>Estado simulado</th></tr></thead><tbody>
+{% for f in filas %}{% for a in f.avisos %}<tr><td>{{ f.codigo }}<br>{{ f.inicio }}</td><td>{{ f.fin or 'Sin retorno a la evaluación' }}</td><td>{{ a.minutos }} min</td><td>{{ a.vence }}</td><td><span class="status {{ 'medium' if a.estado=='Pendiente' else 'blue' if a.estado=='Generado (simulado)' else 'ok' }}">{{ a.estado }}</span></td></tr>{% endfor %}{% else %}<tr><td colspan="5">No hay episodios LOW para esta evaluación. El silencio de comunicación no genera un aviso eléctrico.</td></tr>{% endfor %}
+</tbody></table></div></section>
+{% endblock %}

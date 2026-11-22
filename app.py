@@ -197,11 +197,12 @@ def create_app(test_config=None):
         return dict(elec=elec, elec_cls=elec_cls, com=com, com_cls=com_cls, crit=crit, reps=reps,
                     ultimo=ult_any["ocurrido_en"] if ult_any else None)
 
-    def episodios(centro_id, limite=20):
+    def episodios(centro_id, limite=20, hasta=None):
         """Empareja LOW -> siguiente HIGH (transiciones != episodios)."""
         rows = get_db().execute(
-            "SELECT * FROM eventos WHERE centro_id=? AND tipo IN ('LOW','HIGH') ORDER BY ocurrido_en, id",
-            (centro_id,)).fetchall()
+            "SELECT * FROM eventos WHERE centro_id=? AND tipo IN ('LOW','HIGH') "
+            "AND ocurrido_en<=? ORDER BY ocurrido_en, id",
+            (centro_id, (hasta or ahora()).strftime(FMT))).fetchall()
         eps, abierto = [], None
         for r in rows:
             if r["tipo"] == "LOW":
@@ -215,6 +216,86 @@ def create_app(test_config=None):
         if abierto is not None:
             eps.append(dict(inicio=abierto["ocurrido_en"], fin=None, minutos=None))
         return list(reversed(eps))[:limite]
+
+    def centro_filtrado():
+        valor = request.args.get("centro", "")
+        if not valor:
+            return None
+        try:
+            cid = int(valor)
+        except ValueError:
+            abort(400, "Centro inválido")
+        if not get_db().execute("SELECT 1 FROM centros WHERE id=? AND activo=1", (cid,)).fetchone():
+            abort(400, "Centro inválido")
+        return cid
+
+    @app.route("/tendencias")
+    @role_required("coordinador")
+    def tendencias():
+        now = ahora()
+        desde = request.args.get("desde", (now - timedelta(days=6)).strftime("%Y-%m-%d"))
+        hasta = request.args.get("hasta", now.strftime("%Y-%m-%d"))
+        try:
+            ini, fin = datetime.strptime(desde, "%Y-%m-%d"), datetime.strptime(hasta, "%Y-%m-%d")
+        except ValueError:
+            abort(400, "Fechas inválidas")
+        if fin < ini or (fin - ini).days > 89 or fin.date() > now.date():
+            abort(400, "Seleccione un periodo pasado de entre 1 y 90 días")
+        cid = centro_filtrado()
+        centros = get_db().execute("SELECT * FROM centros WHERE activo=1 ORDER BY codigo").fetchall()
+        dias = {(ini + timedelta(days=i)).strftime("%Y-%m-%d"): 0 for i in range((fin-ini).days+1)}
+        por_centro, total_senales, abiertos = [], 0, 0
+        for c in centros:
+            if cid is not None and c["id"] != cid:
+                continue
+            eps = [e for e in episodios(c["id"], None, now) if desde <= e["inicio"][:10] <= hasta]
+            for e in eps:
+                dias[e["inicio"][:10]] += 1
+            senales = get_db().execute(
+                "SELECT COUNT(*) FROM eventos WHERE centro_id=? AND tipo IN ('LOW','HIGH') "
+                "AND ocurrido_en>=? AND ocurrido_en<=? AND ocurrido_en<?",
+                (c["id"], ini.strftime(FMT), now.strftime(FMT), (fin+timedelta(days=1)).strftime(FMT))).fetchone()[0]
+            total_senales += senales
+            abiertos += sum(e["fin"] is None for e in eps)
+            por_centro.append(dict(codigo=c["codigo"], episodios=len(eps), senales=senales))
+        return render_template("tendencias.html", centros=centros, cid=cid, desde=desde, hasta=hasta,
+            dias=dias, por_centro=por_centro, total=sum(dias.values()), senales=total_senales,
+            abiertos=abiertos, max_dia=max(dias.values(), default=0) or 1,
+            max_centro=max((c["episodios"] for c in por_centro), default=0) or 1)
+
+    @app.route("/avisos-simulados")
+    @login_required
+    def avisos_simulados():
+        now = ahora()
+        valor = request.args.get("evaluado_en", "")
+        try:
+            evaluado = parse_dt(valor.replace("T", " ")) if valor else now
+        except (ValueError, TypeError):
+            abort(400, "Fecha de evaluación inválida")
+        if evaluado is None or evaluado > now:
+            abort(400, "La evaluación no puede estar en el futuro")
+        cid = centro_filtrado()
+        centros = get_db().execute("SELECT * FROM centros WHERE activo=1 ORDER BY codigo").fetchall()
+        filas = []
+        for c in centros:
+            if cid is not None and c["id"] != cid:
+                continue
+            for e in episodios(c["id"], 20, evaluado):
+                inicio = parse_dt(e["inicio"])
+                fin = parse_dt(e["fin"]) if e["fin"] else None
+                avisos = []
+                for minutos in (5, 10):
+                    vence = inicio + timedelta(minutes=minutos)
+                    if fin is not None and fin <= vence:
+                        estado = "Cancelado por retorno"
+                    elif evaluado >= vence:
+                        estado = "Generado (simulado)"
+                    else:
+                        estado = "Pendiente"
+                    avisos.append(dict(minutos=minutos, vence=vence.strftime(FMT), estado=estado))
+                filas.append(dict(codigo=c["codigo"], inicio=e["inicio"], fin=e["fin"], avisos=avisos))
+        return render_template("avisos_simulados.html", centros=centros, cid=cid, filas=filas,
+                               evaluado=evaluado.strftime(FMT))
 
     def crit_cls(nivel):
         return {"Crítica": "alert", "Alta": "alert", "Media": "medium", "Baja": "blue"}.get(nivel, "ok")
