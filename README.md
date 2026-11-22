@@ -127,3 +127,5 @@ Se completaron HU-10 y HU-08-SIM y se ejecutaron 28 pruebas aprobadas en una bas
 La publicación de estos cambios en GitHub no actualiza automáticamente PythonAnywhere. El responsable del alojamiento debe seguir [la actualización de operación](docs/Operacion.md). La reunión del 17/11 respalda el mockup, las historias y P01–P03; la aceptación de esta aplicación final no se ha realizado. No se acredita rotación de credenciales del servidor sin acceso a su administración.
 
 [Contribuciones verificables y apoyo de IA](docs/Contribuciones.md). [Pruebas](docs/Pruebas.md). [Manual de las nuevas funciones](docs/Manual.md).
+
+[Demostración práctica Odoo ERP/CRM con capturas y análisis](docs/Demo_ERP_CRM.md).
